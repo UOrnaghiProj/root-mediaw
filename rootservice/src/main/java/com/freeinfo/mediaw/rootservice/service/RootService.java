@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 
 import com.freeinfo.mediaw.rootservice.connector.GeolocalizationClient;
 import com.freeinfo.mediaw.rootservice.connector.MediaworldClient;
+import com.freeinfo.mediaw.rootservice.exception.MediaworldException;
+import com.freeinfo.mediaw.rootservice.exception.NotFoundException;
 import com.freeinfo.mediaw.rootservice.model.Location;
 import com.freeinfo.mediaw.rootservice.model.MediaAvabilityDTO;
 
@@ -19,14 +21,15 @@ public class RootService {
 	@Autowired
 	MediaworldClient mediaworldClient;
 	
-	public MediaAvabilityDTO getMediaLocations(String itemCode, String cordinate) {
+	public MediaAvabilityDTO getMediaLocations(String itemCode, String cordinate) throws MediaworldException {
 		
 		MediaAvabilityDTO response = new MediaAvabilityDTO();
 		
 		try {
 			response = mediaworldClient.getAvability(itemCode, cordinate).getBody();
+			
 		} catch(FeignException ex) {
-			System.out.println(ex);
+			throw new MediaworldException();
 		}
 		
 		
@@ -35,14 +38,14 @@ public class RootService {
 		
 	}
 	
-	public String getYourLocation(String location) {
+	public String getYourLocation(String location) throws NotFoundException {
 		
 		Location feignResponse = new Location();
 		
 		try {
 			feignResponse = geolocalizationClient.getLocation(location).getBody();
 		} catch(FeignException ex) {
-			//TODO gestione della eccezione
+			throw new NotFoundException(ex.getMessage());
 		}
 		
 		return this.setCordiante(feignResponse);

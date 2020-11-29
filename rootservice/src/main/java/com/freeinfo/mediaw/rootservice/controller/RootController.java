@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.freeinfo.mediaw.rootservice.exception.MediaworldException;
+import com.freeinfo.mediaw.rootservice.exception.NotFoundException;
 import com.freeinfo.mediaw.rootservice.model.MediaAvabilityDTO;
 import com.freeinfo.mediaw.rootservice.service.RootService;
 
@@ -20,7 +22,7 @@ public class RootController {
 	@GetMapping(value = "/avability")
 	public String getCoordinates(@RequestParam(value = "location") String location,
 								 @RequestParam(value = "itemCode") String itemCode,
-								 Model model) {
+								 Model model) throws NotFoundException, MediaworldException {
 		
 		String cordinate = rootService.getYourLocation(location);
 		
